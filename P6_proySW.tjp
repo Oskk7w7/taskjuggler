@@ -45,6 +45,7 @@ rate 145.2
 account cost "Project Cost" {
   account manag "Management"
   account wFront "Web Front-End"
+  account mFront "Mobile Front-end"
   account back "Back-End"
 }
 account rev "Payments"
@@ -146,7 +147,44 @@ task WMGame "Web & Mobile Game" {
     }    
   }
 
-  task ttest "Accpetance tests" {
+  task tmobF "Mobile Front End" {
+    purge chargeset mFront
+    responsible dev1
+    depends WMGame.tback.tBEd
+    task tmGUId "Mobile GUI Design" {
+      effort 9d
+      actual:effort 15d
+      allocate dev1
+    }
+    task tmFEc "Mobile Front End Construction" {
+      effort 15d
+      allocate dev2 dev3
+      depends WMGame.tmobF.tmGUId
+    }
+    task tmFEt "Web Front End Test" {
+      effort 6d
+      allocate dev1depends WMGame.tmobF.tmFEc
+      depends WMGame.tmobF.tmFEc
+    }
+  }
+
+  task tBackDepl "Back End Deployment" {
+    purge chargeset back
+    responsible dev1
+    depends WMGame.tback
+    task cloudSel "Cloud Selection" {
+      effort 2d
+      allocate dev1
+    }
+    task cloudDepl "Cloud Deployment" {
+      effort 2d
+      allocate dev1
+      depends WMGame.tBackDepl.cloudSel
+    }
+
+  }
+
+  task ttest "Acceptance tests" {
       effort 10d
       allocate boss
       allocate dev2
